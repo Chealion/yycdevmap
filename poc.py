@@ -24,7 +24,7 @@ st.set_page_config(page_title="Sunalta Development Map", layout="wide")
 # st.cache - will cache the output of the function
 @st.cache(suppress_st_warning=True)
 def load_data(dataID):
-    #st.write("Cache miss: Loading data from data.calgary.ca")
+    # st.write("Cache miss: Loading data from data.calgary.ca")
     results = socrata_client.get(dataID,
                                  limit=100,
                                  communityname=COMMUNITY_NAME,
@@ -54,7 +54,6 @@ dev_data = dev_data.drop(['point',
                           'locationaddresses'],
                          axis=1)
 dev_data = dev_data.astype({"longitude": np.float64, "latitude": np.float64})
-dev_data_locations = dev_data[['latitude', 'longitude', 'permitnum']].copy()
 
 # Load BP data
 bp_data = load_data(BUILDING_PERMIT_ID)
@@ -76,7 +75,6 @@ bp_data = bp_data.drop(['permittypemapped',
                         'workclassmapped'],
                        axis=1)
 bp_data = bp_data.astype({"longitude": np.float64, "latitude": np.float64})
-bp_data_locations = bp_data[['latitude', 'longitude', 'permitnum']].copy()
 
 # Load tenancy data
 tc_data = load_data(TENANCY_CHANGE_ID)
@@ -84,7 +82,6 @@ tc_data = load_data(TENANCY_CHANGE_ID)
 # Clean data
 tc_data = tc_data.drop(['permittype', 'communitycode', 'communityname', 'quadrant', 'ward', 'point'],  axis=1)
 tc_data = tc_data.astype({"longitude": np.float64, "latitude": np.float64})
-tc_data_locations = tc_data[['latitude', 'longitude', 'permitnum']].copy()
 
 st.title("Sunalta Map")
 st.write("""Orange = Development Permits  
@@ -103,7 +100,7 @@ st.pydeck_chart(pdk.Deck(
     layers=[
         pdk.Layer(
             'ScatterplotLayer',
-            data=dev_data_locations,
+            data=dev_data[['latitude','longitude']],
             auto_highlight=True,
             pickable=True,
             get_position=["longitude", "latitude"],
@@ -113,17 +110,17 @@ st.pydeck_chart(pdk.Deck(
         ),
         pdk.Layer(
             'ScatterplotLayer',
-            data=bp_data_locations,
+            data=bp_data[['latitude','longitude']],
             auto_highlight=True,
             pickable=True,
             get_position=["longitude", "latitude"],
             get_radius=15,
             radius_scale=1,
-            get_fill_color=[169, 90, 161, 255],
+            get_fill_color=[169, 90, 161, 255]
         ),
         pdk.Layer(
             'ScatterplotLayer',
-            data=tc_data_locations,
+            data=tc_data[['latitude','longitude']],
             auto_highlight=True,
             pickable=True,
             get_position=["longitude", "latitude"],
@@ -153,3 +150,20 @@ all_data.set_index('permitnum', inplace=True)
 all_data.sort_values(by=['applieddate'], ascending=False, inplace=True)
 
 st.table(all_data)
+
+st.markdown("""
+----
+
+GitHub: https://github.com/chealion/streamlit-sunalta
+
+Data Sources:
+
+Land Use: https://data.calgary.ca/dataset/Land-Use-Redesignation-Applications/33vi-ew4s
+
+Development: https://data.calgary.ca/dataset/Development-Permits/6933-unw5
+	
+Building Permits: https://data.calgary.ca/Business-and-Economic-Activity/Building-Permits/c2es-76ed
+
+Tenancy Change: https://data.calgary.ca/dataset/Tenancy-Change-Applications/wrtt-2nqs
+
+""")

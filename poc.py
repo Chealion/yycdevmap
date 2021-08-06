@@ -86,6 +86,11 @@ tc_data = tc_data.drop(['permittype', 'communitycode', 'communityname', 'quadran
 tc_data = tc_data.astype({"longitude": np.float64, "latitude": np.float64})
 tc_data_locations = tc_data[['latitude', 'longitude', 'permitnum']].copy()
 
+st.title("Sunalta Map")
+st.write("""Orange = Development Permits  
+Purple = Building Permits  
+Blue = Business Tenancy Changes""")
+
 st.pydeck_chart(pdk.Deck(
     map_style='mapbox://styles/mapbox/light-v9',
     tooltip=True,

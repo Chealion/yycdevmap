@@ -22,7 +22,8 @@ st.set_page_config(page_title="Sunalta Development Map", layout="wide")
 
 
 # st.cache - will cache the output of the function
-@st.cache(suppress_st_warning=True)
+# Keep cache for 24 hours - it's updated daily
+@st.cache(suppress_st_warning=True, ttl=60*60*24)
 def load_data(dataID):
     # st.write("Cache miss: Loading data from data.calgary.ca")
     results = socrata_client.get(dataID,
@@ -100,7 +101,7 @@ st.pydeck_chart(pdk.Deck(
     layers=[
         pdk.Layer(
             'ScatterplotLayer',
-            data=dev_data[['latitude','longitude']],
+            data=dev_data[['latitude', 'longitude']],
             auto_highlight=True,
             pickable=True,
             get_position=["longitude", "latitude"],
@@ -110,7 +111,7 @@ st.pydeck_chart(pdk.Deck(
         ),
         pdk.Layer(
             'ScatterplotLayer',
-            data=bp_data[['latitude','longitude']],
+            data=bp_data[['latitude', 'longitude']],
             auto_highlight=True,
             pickable=True,
             get_position=["longitude", "latitude"],
@@ -120,7 +121,7 @@ st.pydeck_chart(pdk.Deck(
         ),
         pdk.Layer(
             'ScatterplotLayer',
-            data=tc_data[['latitude','longitude']],
+            data=tc_data[['latitude', 'longitude']],
             auto_highlight=True,
             pickable=True,
             get_position=["longitude", "latitude"],
@@ -161,9 +162,8 @@ Data Sources:
 Land Use: https://data.calgary.ca/dataset/Land-Use-Redesignation-Applications/33vi-ew4s
 
 Development: https://data.calgary.ca/dataset/Development-Permits/6933-unw5
-	
+
 Building Permits: https://data.calgary.ca/Business-and-Economic-Activity/Building-Permits/c2es-76ed
 
 Tenancy Change: https://data.calgary.ca/dataset/Tenancy-Change-Applications/wrtt-2nqs
-
 """)

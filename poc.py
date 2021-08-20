@@ -17,8 +17,9 @@ TENANCY_CHANGE_ID = 'wrtt-2nqs'
 COMMUNITY_NAME = 'SUNALTA'
 DATE = '2020-12-31T00:00:00'
 
-# Set view
+# Start presenting
 st.set_page_config(page_title="Calgary Communities Development Map", layout="wide")
+st.title("Community Development Map")
 
 # st.cache - will cache the output of the function
 # Keep cache for 24 hours - it's updated daily
@@ -105,9 +106,6 @@ tc_data = load_data(TENANCY_CHANGE_ID)
 tc_data = tc_data.drop(['permittype', 'communitycode', 'communityname', 'quadrant', 'ward', 'point'],  axis=1)
 tc_data = tc_data.astype({"longitude": np.float64, "latitude": np.float64})
 
-
-# Now we show off the map.
-st.title("Sunalta Map")
 
 fig = pgo.Figure()
 
@@ -219,10 +217,26 @@ all_data = all_data[['permitnum',
 all_data['applieddate'] = pd.to_datetime(all_data['applieddate']).dt.date
 all_data['issueddate'] = pd.to_datetime(all_data['issueddate']).dt.date
 
-all_data.set_index('permitnum', inplace=True)
+# This is needed for st.write, but if we use plotly we won't.
+#all_data.set_index('permitnum', inplace=True)
 all_data.sort_values(by=['applieddate'], ascending=False, inplace=True)
 
-st.write(all_data)
+fig = pgo.Figure(data=[pgo.Table(
+    header=dict(values=list(all_data.columns),
+                align='left'),
+    cells=dict(values=[all_data.permitnum,all_data.address,all_data.applicant,all_data.description,all_data.applieddate,all_data.statuscurrent,all_data.permittype,all_data.estprojectcost,all_data.contractorname,all_data.issueddate],
+               align='center'))
+])
+
+fig.update_layout(
+    margin_pad=0,
+    height=650,
+    hovermode='closest',
+    clickmode='select',
+)
+
+st.plotly_chart(fig, use_container_width=True)
+
 st.markdown("""
 ----
 

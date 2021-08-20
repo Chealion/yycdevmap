@@ -119,12 +119,46 @@ bp_data = bp_data.drop(['permittypemapped',
 bp_data = bp_data.astype({"longitude": np.float64, "latitude": np.float64})
 
 # Load tenancy data
-tc_data = load_data(TENANCY_CHANGE_ID)
+with st.spinner('Loading Tenancy info...'):
+    tc_data = load_data(TENANCY_CHANGE_ID)
 
 # Clean data for joint data frame display
 tc_data = tc_data.drop(['permittype', 'communitycode', 'communityname', 'quadrant', 'ward', 'point'],  axis=1)
 tc_data = tc_data.astype({"longitude": np.float64, "latitude": np.float64})
 
+# Ugly hack
+# Roughly calculate centre of community - based on the building permit data
+# Could not figure out how to use the GeoJSON object in community_data
+gdf = geopandas.GeoDataFrame(
+    bp_data, geometry=geopandas.points_from_xy(bp_data.longitude, bp_data.latitude))
+
+map_centre_x = gdf.geometry.centroid.x.mean()
+map_centre_y = gdf.geometry.centroid.y.mean()
+
+# Rename some columns for normalization
+bp_data = bp_data.rename(columns={"originaladdress": "address"})
+tc_data = tc_data.rename(columns={"applicantname": "applicant", "originaladdress": "address", "proposeduse": "description"})
+
+#all_data = pd.concat([dev_data, bp_data, tc_data, land_use_data])
+all_data = pd.concat([dev_data, bp_data, tc_data])
+# Filter data - could use pandas filters instead
+all_data = all_data[['permitnum',
+                     'address',
+                     'applicant',
+                     'description',
+                     'applieddate',
+                     'statuscurrent',
+                     'permittype',
+                     'estprojectcost',
+                     'contractorname',
+                     'issueddate']]
+#Convert datetimes to dates
+all_data['applieddate'] = pd.to_datetime(all_data['applieddate']).dt.date
+all_data['issueddate'] = pd.to_datetime(all_data['issueddate']).dt.date
+
+# This is needed for st.write, but if we use plotly we won't.
+#all_data.set_index('permitnum', inplace=True)
+all_data.sort_values(by=['applieddate'], ascending=False, inplace=True)
 
 fig = pgo.Figure()
 
@@ -189,7 +223,7 @@ fig.add_trace(pgo.Scattermapbox(
     ),
     text=tc_data['permitnum'],
     meta=tc_data['statuscurrent'],
-    customdata=tc_data['applicantname'],
+    customdata=tc_data['applicant'],
     hovertemplate = "%{text}:<br>Status: %{meta}<br><br>Description: %{customdata}",
     name='Tenancy Changes'
 ))
@@ -204,8 +238,8 @@ fig.update_layout(
         accesstoken=st.secrets['mapbox']['token'],
         bearing=0,
         center=dict(
-            lat=51.0425,
-            lon=-114.1
+            lat=map_centre_y,
+            lon=map_centre_x
         ),
         pitch=0,
         zoom=14,
@@ -215,46 +249,22 @@ fig.update_layout(
 
 st.plotly_chart(fig, use_container_width=True)
 
-# Rename some columns for nomalization
-bp_data = bp_data.rename(columns={"originaladdress": "address"})
-tc_data = tc_data.rename(columns={"applicantname": "applicant", "originaladdress": "address", "proposeduse": "description"})
 
-#all_data = pd.concat([dev_data, bp_data, tc_data, land_use_data])
-all_data = pd.concat([dev_data, bp_data, tc_data])
-# Filter data - could use pandas filters instead
-all_data = all_data[['permitnum',
-                     'address',
-                     'applicant',
-                     'description',
-                     'applieddate',
-                     'statuscurrent',
-                     'permittype',
-                     'estprojectcost',
-                     'contractorname',
-                     'issueddate']]
-#Convert datetimes to dates
-all_data['applieddate'] = pd.to_datetime(all_data['applieddate']).dt.date
-all_data['issueddate'] = pd.to_datetime(all_data['issueddate']).dt.date
-
-# This is needed for st.write, but if we use plotly we won't.
-#all_data.set_index('permitnum', inplace=True)
-all_data.sort_values(by=['applieddate'], ascending=False, inplace=True)
-
-fig = pgo.Figure(data=[pgo.Table(
+table_fig = pgo.Figure(data=[pgo.Table(
     header=dict(values=list(all_data.columns),
                 align='left'),
     cells=dict(values=[all_data.permitnum,all_data.address,all_data.applicant,all_data.description,all_data.applieddate,all_data.statuscurrent,all_data.permittype,all_data.estprojectcost,all_data.contractorname,all_data.issueddate],
                align='center'))
 ])
 
-fig.update_layout(
+table_fig.update_layout(
     margin_pad=0,
     height=650,
     hovermode='closest',
     clickmode='select',
 )
 
-st.plotly_chart(fig, use_container_width=True)
+#st.plotly_chart(table_fig, use_container_width=True)
 
 st.sidebar.markdown("""
 ----

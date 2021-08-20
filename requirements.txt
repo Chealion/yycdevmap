@@ -3,4 +3,4 @@ watchdog
 sodapy
 pandas
 numpy
-pydeck
+plotly

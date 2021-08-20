@@ -2,6 +2,13 @@
 
 Live Version: https://share.streamlit.io/chealion/streamlit-sunalta/main/poc.py
 
+## But... why?
+
+The City of Calgary runs a [development map](https://developmentmap.calgary.ca) but there was a use case I had that the map does not consider. Namely, if I'm checking the map - what's actually new in my community? The development map is awesome for a lot of information, but isn't for a check in or to correlate with other more minor items (building permits, tenancy changes).
+
+Additionally my community is part of the [Centre City Enterprise and Main Streets Exemption Areas](https://www.calgary.ca/business-economy/pda/pd/mybusiness/centre-city-enterprise-area.html) which means a number of activities that would normally trigger a full permit process to notify us of a change do not get distributed to the community association. This solves our problem for finding out what's happening without the burden of the full development permit process.
+
+Hopefully this helps others with the same issue - a lens on what is new, and less on all the information for historical purposes. This is a somewhat limited proof of concept but feel free to use or rewrite as you like!
 ## Data Sources
 
 Data Sources:
@@ -17,7 +24,3 @@ Tenancy Change: https://data.calgary.ca/dataset/Tenancy-Change-Applications/wrtt
 ## Development
 
     streamlit run ./poc.py
-
-## To investigate
-
-* streamlit.plotly_chart for a better map?

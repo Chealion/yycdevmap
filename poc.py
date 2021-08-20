@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as pgo
-from datetime import datetime, timedelta
 import geopandas 
-
+import html
+from datetime import datetime, timedelta
 from sodapy import Socrata
 
 # Socrata Info
@@ -17,7 +17,7 @@ TENANCY_CHANGE_ID = 'wrtt-2nqs'
 
 # -365 days in '2020-12-31T00:00:00'
 DATE = (datetime.today() - timedelta(days=365)).strftime('%Y-%m-%dT00:00:00')
-# Set a default
+# Set a default in case things go very wrong.
 community_name = 'SUNALTA'
 
 # Start presenting
@@ -61,7 +61,23 @@ socrata_client = Socrata("data.calgary.ca", st.secrets["socrata_token"])
 community_data = load_community_data(COMMUNITY_NAMES_ID)
 
 st.sidebar.title("Community")
-community_name = st.sidebar.selectbox('Choose community:', community_data['name'], index=276)
+
+# If ?community_name is set, have it auto set.
+params = st.experimental_get_query_params()
+# Set SUNALTA as fallback
+index=276
+
+if 'community_name' in params:
+    #Turn to uppercase and remove HTML encoding just in case.
+    community_name=html.unescape(params['community_name'][0].upper())
+
+    try:
+        newIndex = community_data.loc[community_data['name'] == community_name].index[0]
+        index = int(newIndex)
+    except:
+        st.warning("Community Name not found. Reverting to defaults")
+
+community_name = st.sidebar.selectbox('Choose community:', community_data['name'], index)
 st.sidebar.markdown('Note: typing the name is easier')
 
 # Load Land Use Data

@@ -62,6 +62,7 @@ community_data = load_community_data(COMMUNITY_NAMES_ID)
 
 st.sidebar.title("Community")
 community_name = st.sidebar.selectbox('Choose community:', community_data['name'], index=276)
+st.sidebar.markdown('Note: typing the name is easier')
 
 # Load Land Use Data
 with st.spinner('Loading Land Use...'):
@@ -249,35 +250,19 @@ fig.update_layout(
 
 st.plotly_chart(fig, use_container_width=True)
 
-
-table_fig = pgo.Figure(data=[pgo.Table(
-    header=dict(values=list(all_data.columns),
-                align='left'),
-    cells=dict(values=[all_data.permitnum,all_data.address,all_data.applicant,all_data.description,all_data.applieddate,all_data.statuscurrent,all_data.permittype,all_data.estprojectcost,all_data.contractorname,all_data.issueddate],
-               align='center'))
-])
-
-table_fig.update_layout(
-    margin_pad=0,
-    height=650,
-    hovermode='closest',
-    clickmode='select',
-)
-
-#st.plotly_chart(table_fig, use_container_width=True)
+# It's not ideal but the table at least keeps the data.
+st.table(all_data)
 
 st.sidebar.markdown("""
 ----
+Collating a bunch of data one place to make things easier. Data is cached for 24 hours.
 
-GitHub: https://github.com/chealion/streamlit-sunalta
+All data is from [data.calgary.ca](https://data.calgary.ca):
 
-Data Sources:
+- [Land Use](https://data.calgary.ca/dataset/Land-Use-Redesignation-Applications/33vi-ew4s)
+- [Development Permits](https://data.calgary.ca/dataset/Development-Permits/6933-unw5)
+- [Building Permits](https://data.calgary.ca/Business-and-Economic-Activity/Building-Permits/c2es-76ed)
+- [Tenancy Changes](https://data.calgary.ca/dataset/Tenancy-Change-Applications/wrtt-2nqs)
 
-Land Use: https://data.calgary.ca/dataset/Land-Use-Redesignation-Applications/33vi-ew4s
-
-Development: https://data.calgary.ca/dataset/Development-Permits/6933-unw5
-
-Building Permits: https://data.calgary.ca/Business-and-Economic-Activity/Building-Permits/c2es-76ed
-
-Tenancy Change: https://data.calgary.ca/dataset/Tenancy-Change-Applications/wrtt-2nqs
+[Forks and PRs greatly appreciated at GitHub](https://github.com/chealion/streamlit-sunalta)
 """)

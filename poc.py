@@ -204,6 +204,7 @@ tc_data = tc_data.rename(columns={"applicantname": "applicant", "originaladdress
 
 #all_data = pd.concat([dev_data, bp_data, tc_data, land_use_data])
 all_data = pd.concat([dev_data, bp_data, tc_data])
+# Filter data - could use pandas filters instead
 all_data = all_data[['permitnum',
                      'address',
                      'applicant',
@@ -214,13 +215,14 @@ all_data = all_data[['permitnum',
                      'estprojectcost',
                      'contractorname',
                      'issueddate']]
+#Convert datetimes to dates
+all_data['applieddate'] = pd.to_datetime(all_data['applieddate']).dt.date
+all_data['issueddate'] = pd.to_datetime(all_data['issueddate']).dt.date
+
 all_data.set_index('permitnum', inplace=True)
 all_data.sort_values(by=['applieddate'], ascending=False, inplace=True)
 
-
-# How to make these tables more useful. st.table sucks.
-st.table(all_data)
-st.table(land_use_data)
+st.write(all_data)
 st.markdown("""
 ----
 

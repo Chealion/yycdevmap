@@ -2,20 +2,23 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as pgo
+from datetime import datetime, timedelta
+import geopandas 
 
 from sodapy import Socrata
 
 # Socrata Info
 # Socrata Dataset IDs
-COMMUNITY_NAMES_ID = 'jd78-wxjp'
+COMMUNITY_NAMES_ID = 'surr-xmvs'
 LAND_USE_ID = '33vi-ew4s'
 DEVELOPMENT_PERMIT_ID = '6933-unw5'
 BUILDING_PERMIT_ID = 'c2es-76ed'
 TENANCY_CHANGE_ID = 'wrtt-2nqs'
 
-# Eventual variables
-COMMUNITY_NAME = 'SUNALTA'
-DATE = '2020-12-31T00:00:00'
+# -365 days in '2020-12-31T00:00:00'
+DATE = (datetime.today() - timedelta(days=365)).strftime('%Y-%m-%dT00:00:00')
+# Set a default
+community_name = 'SUNALTA'
 
 # Start presenting
 st.set_page_config(page_title="Calgary Communities Development Map", layout="wide")
@@ -27,7 +30,7 @@ st.title("Community Development Map")
 def load_data(dataID):
     results = socrata_client.get(dataID,
                                  limit=100,
-                                 communityname=COMMUNITY_NAME,
+                                 communityname=community_name,
                                  where="applieddate > '" + DATE + "'",
                                  order="applieddate DESC",
                                  exclude_system_fields=True)
@@ -45,10 +48,24 @@ def load_land_use_data(dataID):
     data = pd.DataFrame.from_dict(results)
     return data
 
+@st.cache(suppress_st_warning=True)
+def load_community_data(dataID):
+    results = socrata_client.get(dataID,
+                                 order="name ASC",
+                                 exclude_system_fields=True)
+    data = pd.DataFrame.from_dict(results)
+    return data
+
 socrata_client = Socrata("data.calgary.ca", st.secrets["socrata_token"])
 
+community_data = load_community_data(COMMUNITY_NAMES_ID)
+
+st.sidebar.title("Community")
+community_name = st.sidebar.selectbox('Choose community:', community_data['name'], index=276)
+
 # Load Land Use Data
-land_use_data = load_land_use_data(LAND_USE_ID)
+with st.spinner('Loading Land Use...'):
+    land_use_data = load_land_use_data(LAND_USE_ID)
 
 # Clean data for joint data frame display
 land_use_data = land_use_data.drop(['permittype',
@@ -61,7 +78,8 @@ land_use_data = land_use_data.drop(['permittype',
 land_use_data = land_use_data.astype({"longitude": np.float64, "latitude": np.float64})
 
 # Load DP data
-dev_data = load_data(DEVELOPMENT_PERMIT_ID)
+with st.spinner('Loading DPs...'):
+    dev_data = load_data(DEVELOPMENT_PERMIT_ID)
 
 # Clean data for joint data frame display
 dev_data = dev_data.drop(['point',
@@ -79,7 +97,8 @@ dev_data = dev_data.drop(['point',
 dev_data = dev_data.astype({"longitude": np.float64, "latitude": np.float64})
 
 # Load BP data
-bp_data = load_data(BUILDING_PERMIT_ID)
+with st.spinner('Loading BPs...'):
+    bp_data = load_data(BUILDING_PERMIT_ID)
 
 # Clean data for joint data frame display
 bp_data = bp_data.drop(['permittypemapped',
@@ -237,7 +256,7 @@ fig.update_layout(
 
 st.plotly_chart(fig, use_container_width=True)
 
-st.markdown("""
+st.sidebar.markdown("""
 ----
 
 GitHub: https://github.com/chealion/streamlit-sunalta

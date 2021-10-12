@@ -65,7 +65,7 @@ st.sidebar.title("Community")
 # If ?community_name is set, have it auto set.
 params = st.experimental_get_query_params()
 # Set SUNALTA as fallback
-index=276
+index=275
 
 if 'community_name' in params:
     #Turn to uppercase and remove HTML encoding just in case.

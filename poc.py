@@ -64,8 +64,8 @@ st.sidebar.title("Community")
 
 # If ?community_name is set, have it auto set.
 params = st.experimental_get_query_params()
-# Set SUNALTA as fallback
-index=275
+# init value just in case
+index=0
 
 if 'community_name' in params:
     #Turn to uppercase and remove HTML encoding just in case.
@@ -76,6 +76,8 @@ if 'community_name' in params:
         index = int(newIndex)
     except:
         st.warning("Community Name not found. Reverting to defaults")
+        newIndex = community_data.loc[community_data['name'] == "SUNALTA"].index[0]
+        index = int(newIndex)
 
 community_name = st.sidebar.selectbox('Choose community:', community_data['name'], index)
 st.sidebar.markdown('Note: typing the name is easier')

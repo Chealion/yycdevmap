@@ -9,6 +9,7 @@ The City of Calgary runs a [development map](https://developmentmap.calgary.ca) 
 Additionally my community is part of the [Centre City Enterprise and Main Streets Exemption Areas](https://www.calgary.ca/business-economy/pda/pd/mybusiness/centre-city-enterprise-area.html) which means a number of activities that would normally trigger a full permit process to notify us of a change do not get distributed to the community association. This solves our problem for finding out what's happening without the burden of the full development permit process.
 
 Hopefully this helps others with the same issue - a lens on what is new, and less on all the information for historical purposes. This is a somewhat limited proof of concept but feel free to use or rewrite as you like!
+
 ## Data Sources
 
 Data Sources:
@@ -22,5 +23,15 @@ Building Permits: https://data.calgary.ca/Business-and-Economic-Activity/Buildin
 Tenancy Change: https://data.calgary.ca/dataset/Tenancy-Change-Applications/wrtt-2nqs
 
 ## Development
+
+### Install Requirements
+
+    pip3 install -r requirements.txt
+
+#### macOS Notes
+
+You'll want to install proj and gdal via Homebrew first
+
+### Run directly
 
     streamlit run ./poc.py

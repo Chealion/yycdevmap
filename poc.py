@@ -9,6 +9,7 @@ from sodapy import Socrata
 
 # Socrata Info
 # Socrata Dataset IDs
+
 COMMUNITY_NAMES_ID = 'surr-xmvs'
 LAND_USE_ID = '33vi-ew4s'
 DEVELOPMENT_PERMIT_ID = '6933-unw5'
@@ -78,6 +79,9 @@ if 'community_name' in params:
         st.warning("Community Name not found. Reverting to defaults")
         newIndex = community_data.loc[community_data['name'] == "SUNALTA"].index[0]
         index = int(newIndex)
+else:
+    newIndex = community_data.loc[community_data['name'] == community_name].index[0]
+    index = int(newIndex)
 
 community_name = st.sidebar.selectbox('Choose community:', community_data['name'], index)
 st.sidebar.markdown('Note: typing the name is easier')
@@ -127,7 +131,6 @@ bp_data = bp_data.drop(['permittypemapped',
                         'housingunits',
                         'communitycode',
                         'communityname',
-                        'location',
                         'locationcount',
                         'locationtypes',
                         'locationaddresses',

@@ -1,7 +1,7 @@
-streamlit>=1.14.1
-watchdog>=2.1.9
+streamlit>=1.16.0
+watchdog>=2.2.1
 sodapy>=2.2.0
-pandas>=1.5.1
-geopandas>=0.12.1
-numpy>=1.23.4
+pandas>=1.5.2
+geopandas>=0.12.2
+numpy>=1.24.1
 plotly>=5.11.0

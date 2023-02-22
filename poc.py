@@ -253,11 +253,18 @@ fig.add_trace(pgo.Scattermapbox(
 ))
 
 fig.update_layout(
-    margin_pad=0,
-    height=650,
+    margin = {
+        "r": 0,
+        "t": 33,
+        "l": 0,
+        "b": 0,
+        },
+    height=600,
     hovermode='closest',
     clickmode='select',
     showlegend=True,
+    legend_orientation='h',
+    legend_y=1.05,
     mapbox=dict(
         accesstoken=st.secrets['mapbox']['token'],
         bearing=0,

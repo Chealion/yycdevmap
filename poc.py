@@ -7,9 +7,9 @@ import html
 from datetime import datetime, timedelta
 from sodapy import Socrata
 
+
 # Socrata Info
 # Socrata Dataset IDs
-
 COMMUNITY_NAMES_ID = 'surr-xmvs'
 LAND_USE_ID = '33vi-ew4s'
 DEVELOPMENT_PERMIT_ID = '6933-unw5'
@@ -24,11 +24,13 @@ community_name = 'SUNALTA'
 # Start presenting
 st.set_page_config(page_title="Calgary Communities Development Map", layout="wide")
 st.title("Community Development Map")
+# Remove marging at top of page
+st.markdown("""<style>.appview-container { margin-top: -80px; padding: 0; }</style>""", unsafe_allow_html=True)
 
-# st.cache - will cache the output of the function
+# st.cache_data - will cache the output of the function
 # Keep cache for 24 hours - it's updated daily
-@st.cache(suppress_st_warning=True, ttl=60*60*24)
-def load_data(dataID):
+@st.cache_data(ttl=60*60*24)
+def load_data(dataID, community_name):
     results = socrata_client.get(dataID,
                                  limit=100,
                                  communityname=community_name,
@@ -39,7 +41,7 @@ def load_data(dataID):
     return data
 
 # Separate loading for Land Use Data because it's not consistent with every other dataset
-@st.cache(suppress_st_warning=True, ttl=60*60*24)
+@st.cache_data(ttl=60*60*24)
 def load_land_use_data(dataID):
     results = socrata_client.get(dataID,
                                  limit=1000,
@@ -49,7 +51,7 @@ def load_land_use_data(dataID):
     data = pd.DataFrame.from_dict(results)
     return data
 
-@st.cache(suppress_st_warning=True)
+#@st.cache_data()
 def load_community_data(dataID):
     results = socrata_client.get(dataID,
                                  order="name ASC",
@@ -102,7 +104,7 @@ land_use_data = land_use_data.astype({"longitude": np.float64, "latitude": np.fl
 
 # Load DP data
 with st.spinner('Loading DPs...'):
-    dev_data = load_data(DEVELOPMENT_PERMIT_ID)
+    dev_data = load_data(DEVELOPMENT_PERMIT_ID, community_name)
 
 # Clean data for joint data frame display
 dev_data = dev_data.drop(['point',
@@ -121,7 +123,7 @@ dev_data = dev_data.astype({"longitude": np.float64, "latitude": np.float64})
 
 # Load BP data
 with st.spinner('Loading BPs...'):
-    bp_data = load_data(BUILDING_PERMIT_ID)
+    bp_data = load_data(BUILDING_PERMIT_ID, community_name)
 
 # Clean data for joint data frame display
 bp_data = bp_data.drop(['permittypemapped',
@@ -142,7 +144,7 @@ bp_data = bp_data.astype({"longitude": np.float64, "latitude": np.float64})
 
 # Load tenancy data
 with st.spinner('Loading Tenancy info...'):
-    tc_data = load_data(TENANCY_CHANGE_ID)
+    tc_data = load_data(TENANCY_CHANGE_ID, community_name)
 
 # Clean data for joint data frame display
 tc_data = tc_data.drop(['permittype', 'communitycode', 'communityname', 'quadrant', 'ward', 'point'],  axis=1)
@@ -193,7 +195,7 @@ fig.add_trace(pgo.Scattermapbox(
     marker=pgo.scattermapbox.Marker(
         size=13,
         color='rgb(245,121,58)',
-        opacity=0.7
+        opacity=0.7,
     ),
     text=land_use_data['permitnum'],
     meta=land_use_data['statuscurrent'],
@@ -209,7 +211,7 @@ fig.add_trace(pgo.Scattermapbox(
     marker=pgo.scattermapbox.Marker(
         size=13,
         color='rgb(169, 90, 161)',
-        opacity=0.7
+        opacity=0.7,
     ),
     text=dev_data['permitnum'],
     meta=dev_data['statuscurrent'],
@@ -225,7 +227,7 @@ fig.add_trace(pgo.Scattermapbox(
     marker=pgo.scattermapbox.Marker(
         size=13,
         color='rgb(133, 192, 249)',
-        opacity=0.7
+        opacity=0.7,
     ),
     text=bp_data['permitnum'],
     meta=bp_data['statuscurrent'],

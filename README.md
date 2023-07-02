@@ -1,6 +1,6 @@
 # Community Development Map
 
-Live Version: https://share.streamlit.io/chealion/streamlit-sunalta/main/poc.py
+Live Version: https://yycdevmap.streamlit.app/
 
 ## But... why?
 

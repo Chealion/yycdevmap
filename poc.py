@@ -2,11 +2,11 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as pgo
-import geopandas 
+import geopandas
 import html
+import json
 from datetime import datetime, timedelta
 from sodapy import Socrata
-
 
 # Socrata Info
 # Socrata Dataset IDs
@@ -21,7 +21,6 @@ DATE = (datetime.today() - timedelta(days=365)).strftime('%Y-%m-%dT00:00:00')
 # Set a default in case things go very wrong.
 community_name = 'SUNALTA'
 
-# Start presenting
 st.set_page_config(page_title="Calgary Communities Development Map", layout="wide")
 st.title("Community Development Map")
 # Remove marging at top of page
@@ -51,7 +50,7 @@ def load_land_use_data(dataID):
     data = pd.DataFrame.from_dict(results)
     return data
 
-#@st.cache_data()
+@st.cache_data(ttl=60*60*24)
 def load_community_data(dataID):
     results = socrata_client.get(dataID,
                                  order="name ASC",
@@ -65,7 +64,7 @@ community_data = load_community_data(COMMUNITY_NAMES_ID)
 
 st.sidebar.title("Community")
 
-# If ?community_name is set, have it auto set.
+# If ?community_name is set, grab it
 params = st.experimental_get_query_params()
 # init value just in case
 index=0
@@ -98,7 +97,7 @@ land_use_data = land_use_data.drop(['permittype',
                                     'proposedlud',
                                     'locationcount',
                                     'multipoint',
-                                    'completeddate'], 
+                                    'completeddate'],
                                     axis=1)
 land_use_data = land_use_data.astype({"longitude": np.float64, "latitude": np.float64})
 
@@ -187,7 +186,7 @@ all_data.sort_values(by=['applieddate'], ascending=False, inplace=True)
 fig = pgo.Figure()
 
 # Plotly's version of Layer is Trace
-# Zesty Colour Palette from https://venngage.com/blog/color-blind-friendly-palette/ 
+# Zesty Colour Palette from https://venngage.com/blog/color-blind-friendly-palette/
 fig.add_trace(pgo.Scattermapbox(
     lat=land_use_data['latitude'],
     lon=land_use_data['longitude'],

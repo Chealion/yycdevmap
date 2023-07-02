@@ -106,8 +106,7 @@ with st.spinner('Loading DPs...'):
     dev_data = load_data(DEVELOPMENT_PERMIT_ID, community_name)
 
 # Clean data for joint data frame display
-dev_data = dev_data.drop(['point',
-                          'proposedusecode',
+dev_data = dev_data.drop(['proposedusecode',
                           'communitycode',
                           'communityname',
                           'ward',
@@ -118,7 +117,18 @@ dev_data = dev_data.drop(['point',
                           'locationcount',
                           'locationaddresses'],
                          axis=1)
-dev_data = dev_data.astype({"longitude": np.float64, "latitude": np.float64})
+
+# Dev lat/long is rounded. Use point data (dev_data.point[X]['coordinates'])
+# Extract lat and lon from the points
+lats = []
+lons = []
+for i in dev_data.point:
+    lats.append(i['coordinates'][1])
+    lons.append(i['coordinates'][0])
+
+dev_data['latitude'] = pd.Series(lats, copy=False, dtype=np.float64)
+dev_data['longitude'] = pd.Series(lons, copy=False, dtype=np.float64)
+
 
 # Load BP data
 with st.spinner('Loading BPs...'):
@@ -146,8 +156,22 @@ with st.spinner('Loading Tenancy info...'):
     tc_data = load_data(TENANCY_CHANGE_ID, community_name)
 
 # Clean data for joint data frame display
-tc_data = tc_data.drop(['permittype', 'communitycode', 'communityname', 'quadrant', 'ward', 'point'],  axis=1)
-tc_data = tc_data.astype({"longitude": np.float64, "latitude": np.float64})
+tc_data = tc_data.drop(['permittype',
+                        'communitycode',
+                        'communityname',
+                        'quadrant',
+                        'ward'],
+                      axis=1)
+# TC lat/long is rounded. Use point data (tc_data.point[X]['coordinates'])
+# Extract lat and lon from the points
+lats = []
+lons = []
+for i in tc_data.point:
+    lats.append(i['coordinates'][1])
+    lons.append(i['coordinates'][0])
+
+tc_data['latitude'] = pd.Series(lats, copy=False, dtype=np.float64)
+tc_data['longitude'] = pd.Series(lons, copy=False, dtype=np.float64)
 
 # Ugly hack
 # Roughly calculate centre of community - based on the building permit data

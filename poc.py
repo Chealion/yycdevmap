@@ -308,7 +308,8 @@ st.table(all_data)
 
 st.sidebar.markdown("""
 ----
-Collating a bunch of data one place to make things easier. Data is cached for 24 hours.
+Collating a bunch of data one place to make things easier. Data is cached for 24 hours.  
+Land use changes do *not* appear in the table.
 
 All data is from [data.calgary.ca](https://data.calgary.ca):
 

@@ -65,7 +65,7 @@ community_data = load_community_data(COMMUNITY_NAMES_ID)
 st.sidebar.title("Community")
 
 # If ?community_name is set, grab it
-params = st.experimental_get_query_params()
+params = st.query_params.to_dict()
 # init value just in case
 index=0
 
@@ -173,9 +173,8 @@ for i in tc_data.point:
 tc_data['latitude'] = pd.Series(lats, copy=False, dtype=np.float64)
 tc_data['longitude'] = pd.Series(lons, copy=False, dtype=np.float64)
 
-# Ugly hack
 # Roughly calculate centre of community - based on the building permit data
-# Could not figure out how to use the GeoJSON object in community_data
+# Could not figure out how to use the GeoJSON object in community_data when this was written
 gdf = geopandas.GeoDataFrame(
     bp_data, geometry=geopandas.points_from_xy(bp_data.longitude, bp_data.latitude))
 

@@ -3,10 +3,13 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as pgo
 import geopandas
+from geopandas.tools import sjoin
 import html
 import json
 from datetime import datetime, timedelta
 from sodapy import Socrata
+from shapely import Point
+from shapely.geometry import shape
 
 # Socrata Info
 # Socrata Dataset IDs
@@ -85,6 +88,12 @@ else:
     index = int(newIndex)
 
 community_name = st.sidebar.selectbox('Choose community:', community_data['name'], index)
+
+# Grab the current community's polygon
+selected_community = community_data.loc[community_data['name'] == community_name]
+selected_community_geometry = selected_community['multipolygon'].apply(lambda x: shape(x))
+selected_community_gdf = geopandas.GeoDataFrame(selected_community, geometry=selected_community_geometry)
+
 st.sidebar.markdown('Note: typing the name is easier')
 
 # Load Land Use Data
@@ -101,6 +110,11 @@ land_use_data = land_use_data.drop(['permittype',
                                     axis=1)
 land_use_data = land_use_data.astype({"longitude": np.float64, "latitude": np.float64})
 
+# Remove land use data from the table if it's not within the community
+land_use_geometry = [Point(xy) for xy in zip(land_use_data['longitude'], land_use_data['latitude'])]
+land_use_gdf = geopandas.GeoDataFrame(land_use_data, geometry=land_use_geometry)
+
+filtered_land_use_data = sjoin(land_use_gdf, selected_community_gdf, how='inner')
 
 # Create DMAP links on land use permits
 filtered_land_use_data['permitnum'] = 'https://developmentmap.calgary.ca/?find=' + filtered_land_use_data['permitnum']
@@ -145,7 +159,6 @@ bp_data = bp_data.drop(['permittypemapped',
                         'permitclassgroup',
                         'permitclassmapped',
                         'workclassgroup',
-                        'housingunits',
                         'communitycode',
                         'communityname',
                         'locationcount',
@@ -184,15 +197,16 @@ tc_data['longitude'] = pd.Series(lons, copy=False, dtype=np.float64)
 gdf = geopandas.GeoDataFrame(
     bp_data, geometry=geopandas.points_from_xy(bp_data.longitude, bp_data.latitude))
 
-map_centre_x = gdf.geometry.centroid.x.mean()
-map_centre_y = gdf.geometry.centroid.y.mean()
+
+map_centre_x = selected_community_gdf.geometry.centroid.x.mean()
+map_centre_y = selected_community_gdf.geometry.centroid.y.mean()
 
 # Rename some columns for normalization
 bp_data = bp_data.rename(columns={"originaladdress": "address"})
 tc_data = tc_data.rename(columns={"applicantname": "applicant", "originaladdress": "address", "proposeduse": "description"})
 
-#all_data = pd.concat([dev_data, bp_data, tc_data, land_use_data])
-all_data = pd.concat([dev_data, bp_data, tc_data])
+
+all_data = pd.concat([dev_data, bp_data, tc_data, filtered_land_use_data])
 # Filter data - could use pandas filters instead
 all_data = all_data[['permitnum',
                      'address',
@@ -204,30 +218,30 @@ all_data = all_data[['permitnum',
                      'estprojectcost',
                      'contractorname',
                      'issueddate']]
+
 #Convert datetimes to dates
 all_data['applieddate'] = pd.to_datetime(all_data['applieddate']).dt.date
 all_data['issueddate'] = pd.to_datetime(all_data['issueddate']).dt.date
 
-# This is needed for st.write, but if we use plotly we won't.
-#all_data.set_index('permitnum', inplace=True)
 all_data.sort_values(by=['applieddate'], ascending=False, inplace=True)
+
 
 fig = pgo.Figure()
 
 # Plotly's version of Layer is Trace
 # Zesty Colour Palette from https://venngage.com/blog/color-blind-friendly-palette/
 fig.add_trace(pgo.Scattermapbox(
-    lat=land_use_data['latitude'],
-    lon=land_use_data['longitude'],
+    lat=filtered_land_use_data['latitude'],
+    lon=filtered_land_use_data['longitude'],
     mode='markers',
     marker=pgo.scattermapbox.Marker(
         size=13,
         color='rgb(245,121,58)',
         opacity=0.7,
     ),
-    text=land_use_data['permitnum'],
-    meta=land_use_data['statuscurrent'],
-    customdata=land_use_data['description'],
+    text=filtered_land_use_data['permitnum'],
+    meta=filtered_land_use_data['statuscurrent'],
+    customdata=filtered_land_use_data['description'],
     hovertemplate = "%{text}:<br>Status: %{meta}<br><br>Description: %{customdata}",
     name='Land Use'
 ))

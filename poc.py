@@ -101,6 +101,10 @@ land_use_data = land_use_data.drop(['permittype',
                                     axis=1)
 land_use_data = land_use_data.astype({"longitude": np.float64, "latitude": np.float64})
 
+
+# Create DMAP links on land use permits
+filtered_land_use_data['permitnum'] = 'https://developmentmap.calgary.ca/?find=' + filtered_land_use_data['permitnum']
+
 # Load DP data
 with st.spinner('Loading DPs...'):
     dev_data = load_data(DEVELOPMENT_PERMIT_ID, community_name)
@@ -129,6 +133,8 @@ for i in dev_data.point:
 dev_data['latitude'] = pd.Series(lats, copy=False, dtype=np.float64)
 dev_data['longitude'] = pd.Series(lons, copy=False, dtype=np.float64)
 
+# Create DMAP links on dev permits
+dev_data['permitnum'] = 'https://developmentmap.calgary.ca/?find=' + dev_data['permitnum']
 
 # Load BP data
 with st.spinner('Loading BPs...'):
@@ -302,8 +308,22 @@ fig.update_layout(
 
 st.plotly_chart(fig, use_container_width=True)
 
-# It's not ideal but the table at least keeps the data.
-st.table(all_data)
+st.dataframe(all_data, hide_index=True, use_container_width=True, height=(len(all_data.index) + 1) * 35 + 3,
+    column_config={
+        "permitnum": st.column_config.LinkColumn(
+            "Permit Number",
+            display_text="=(.*)"
+        ),
+        "address": st.column_config.TextColumn("Address"),
+        "applicant": st.column_config.TextColumn("Applicant", width="medium"),
+        "description": st.column_config.TextColumn("Description"),
+        "applieddate": st.column_config.DateColumn("Application Date"),
+        "statuscurrent": st.column_config.TextColumn("Status"),
+        "permittype": st.column_config.TextColumn("Permit Type"),
+        "estprojectcost": st.column_config.TextColumn("Estimated Project Cost"),
+        "contractorname": st.column_config.TextColumn("Contractor Name"),
+        "issueddate": st.column_config.DateColumn("Issued Date"),
+    })
 
 st.sidebar.markdown("""
 ----

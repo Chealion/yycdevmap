@@ -39,7 +39,7 @@ def load_data(dataID, community_name):
     data = pd.DataFrame.from_dict(results)
     return data
 
-# Separate loading for Land Use Data because it's not consistent with every other dataset
+# Separate loading for Land Use Data because it does not share many of the same fields as other datasets
 @st.cache_data(ttl=60*60*24)
 def load_land_use_data(dataID):
     results = socrata_client.get(dataID,
@@ -312,6 +312,7 @@ Land use changes do *not* appear in the table.
 
 All data is from [data.calgary.ca](https://data.calgary.ca):
 
+- [Community Boundaries](https://data.calgary.ca/Base-Maps/Community-District-Boundaries/surr-xmvs)
 - [Land Use](https://data.calgary.ca/dataset/Land-Use-Redesignation-Applications/33vi-ew4s)
 - [Development Permits](https://data.calgary.ca/dataset/Development-Permits/6933-unw5)
 - [Building Permits](https://data.calgary.ca/Business-and-Economic-Activity/Building-Permits/c2es-76ed)

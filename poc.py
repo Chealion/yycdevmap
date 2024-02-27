@@ -352,5 +352,5 @@ All data is from [data.calgary.ca](https://data.calgary.ca):
 - [Building Permits](https://data.calgary.ca/Business-and-Economic-Activity/Building-Permits/c2es-76ed)
 - [Tenancy Changes](https://data.calgary.ca/dataset/Tenancy-Change-Applications/wrtt-2nqs)
 
-[Forks and PRs greatly appreciated at GitHub](https://github.com/chealion/streamlit-sunalta)
+[Forks and PRs greatly appreciated at GitHub](https://github.com/chealion/yycdevmap)
 """)

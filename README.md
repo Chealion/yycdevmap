@@ -14,12 +14,9 @@ Hopefully this helps others with the same issue - a lens on what is new, and les
 
 Data Sources:
 
-Land Use: https://data.calgary.ca/dataset/Land-Use-Redesignation-Applications/33vi-ew4s
-
-Development: https://data.calgary.ca/dataset/Development-Permits/6933-unw5
-
-Building Permits: https://data.calgary.ca/Business-and-Economic-Activity/Building-Permits/c2es-76ed
-
+Land Use: https://data.calgary.ca/dataset/Land-Use-Redesignation-Applications/33vi-ew4s  
+Development: https://data.calgary.ca/dataset/Development-Permits/6933-unw5  
+Building Permits: https://data.calgary.ca/Business-and-Economic-Activity/Building-Permits/c2es-76ed  
 Tenancy Change: https://data.calgary.ca/dataset/Tenancy-Change-Applications/wrtt-2nqs
 
 ## Development

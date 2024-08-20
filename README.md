@@ -21,9 +21,15 @@ Tenancy Change: https://data.calgary.ca/dataset/Tenancy-Change-Applications/wrtt
 
 ## Development
 
+### Optionally create venv
+
+    python3 -m venv yycdevmap
+    source yycdevmap/bin/activate
+
 ### Install Requirements
 
-    pip3 install -r requirements.txt
+    source yycdevmap/bin/activate
+    pip install -r requirements.txt
 
 #### macOS Notes
 
@@ -31,4 +37,5 @@ You'll want to install proj and gdal via Homebrew first
 
 ### Run directly
 
+    source yycdevmap/bin/activate
     streamlit run ./poc.py

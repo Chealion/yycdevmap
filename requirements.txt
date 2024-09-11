@@ -1,7 +1,7 @@
-streamlit==1.37.1
-watchdog==4.0.2
-sodapy==2.2.0
-pandas==2.2.2
 geopandas==1.0.1
-numpy==2.1.0
-plotly==5.23.0
+numpy==2.1.1
+pandas==2.2.2
+plotly==5.24.0
+sodapy==2.2.0
+streamlit==1.38.0
+watchdog==5.0.2

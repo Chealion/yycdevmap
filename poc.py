@@ -230,11 +230,11 @@ fig = pgo.Figure()
 
 # Plotly's version of Layer is Trace
 # Zesty Colour Palette from https://venngage.com/blog/color-blind-friendly-palette/
-fig.add_trace(pgo.Scattermapbox(
+fig.add_trace(pgo.Scattermap(
     lat=filtered_land_use_data['latitude'],
     lon=filtered_land_use_data['longitude'],
     mode='markers',
-    marker=pgo.scattermapbox.Marker(
+    marker=pgo.scattermap.Marker(
         size=13,
         color='rgb(245,121,58)',
         opacity=0.7,
@@ -246,11 +246,11 @@ fig.add_trace(pgo.Scattermapbox(
     name='Land Use'
 ))
 
-fig.add_trace(pgo.Scattermapbox(
+fig.add_trace(pgo.Scattermap(
     lat=dev_data['latitude'],
     lon=dev_data['longitude'],
     mode='markers',
-    marker=pgo.scattermapbox.Marker(
+    marker=pgo.scattermap.Marker(
         size=13,
         color='rgb(169, 90, 161)',
         opacity=0.7,
@@ -262,11 +262,11 @@ fig.add_trace(pgo.Scattermapbox(
     name='Development Permits'
 ))
 
-fig.add_trace(pgo.Scattermapbox(
+fig.add_trace(pgo.Scattermap(
     lat=bp_data['latitude'],
     lon=bp_data['longitude'],
     mode='markers',
-    marker=pgo.scattermapbox.Marker(
+    marker=pgo.scattermap.Marker(
         size=13,
         color='rgb(133, 192, 249)',
         opacity=0.7,
@@ -278,11 +278,11 @@ fig.add_trace(pgo.Scattermapbox(
     name='Building Permits'
 ))
 
-fig.add_trace(pgo.Scattermapbox(
+fig.add_trace(pgo.Scattermap(
     lat=tc_data['latitude'],
     lon=tc_data['longitude'],
     mode='markers',
-    marker=pgo.scattermapbox.Marker(
+    marker=pgo.scattermap.Marker(
         size=13,
         color='rgb(15, 32, 128)',
         opacity=0.7
@@ -307,8 +307,7 @@ fig.update_layout(
     showlegend=True,
     legend_orientation='h',
     legend_y=1.05,
-    mapbox=dict(
-        accesstoken=st.secrets['mapbox']['token'],
+    map=dict(
         bearing=0,
         center=dict(
             lat=map_centre_y,

@@ -26,8 +26,8 @@ community_name = 'SUNALTA'
 
 st.set_page_config(page_title="Calgary Communities Development Map", layout="wide")
 st.title("Community Development Map")
-# Remove marging at top of page
-st.markdown("""<style>.appview-container { margin-top: -80px; padding: 0; }</style>""", unsafe_allow_html=True)
+# Remove margin at top of page
+st.markdown("""<style>.appview-container { margin-top: -65px; padding: 0; }</style>""", unsafe_allow_html=True)
 
 # st.cache_data - will cache the output of the function
 # Keep cache for 24 hours - it's updated daily

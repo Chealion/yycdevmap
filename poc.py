@@ -319,9 +319,9 @@ fig.update_layout(
     ),
 )
 
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width="stretch")
 
-st.dataframe(all_data, hide_index=True, use_container_width=True, height=(len(all_data.index) + 1) * 35 + 3,
+st.dataframe(all_data, hide_index=True, width="stretch", height=(len(all_data.index) + 1) * 35 + 3,
     column_config={
         "permitnum": st.column_config.LinkColumn(
             "Permit Number",

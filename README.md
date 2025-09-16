@@ -33,6 +33,11 @@ Tenancy Change: https://data.calgary.ca/dataset/Tenancy-Change-Applications/wrtt
     source yycdevmap/bin/activate
     pip install -r requirements.txt
 
+### Using uv
+
+    uv venv
+    uv sync
+
 #### macOS Notes
 
 You'll want to install proj and gdal via Homebrew first

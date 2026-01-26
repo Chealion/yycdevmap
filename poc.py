@@ -94,7 +94,23 @@ selected_community = community_data.loc[community_data['name'] == community_name
 selected_community_geometry = selected_community['multipolygon'].apply(lambda x: shape(x))
 selected_community_gdf = geopandas.GeoDataFrame(selected_community, geometry=selected_community_geometry)
 
-st.sidebar.markdown('Note: typing the name is easier')
+st.sidebar.markdown("""
+Note: typing the name is easier.
+
+----
+Collating a bunch of data one place to make things easier. Data is cached for 24 hours.
+Land use changes do *not* appear in the table.
+
+All data is from [data.calgary.ca](https://data.calgary.ca):
+
+- [Community Boundaries](https://data.calgary.ca/Base-Maps/Community-District-Boundaries/surr-xmvs)
+- [Land Use](https://data.calgary.ca/dataset/Land-Use-Redesignation-Applications/33vi-ew4s)
+- [Development Permits](https://data.calgary.ca/dataset/Development-Permits/6933-unw5)
+- [Building Permits](https://data.calgary.ca/Business-and-Economic-Activity/Building-Permits/c2es-76ed)
+- [Tenancy Changes](https://data.calgary.ca/dataset/Tenancy-Change-Applications/wrtt-2nqs)
+
+[Forks and PRs greatly appreciated at GitHub](https://github.com/chealion/yycdevmap)
+""")
 
 # Load Land Use Data
 with st.spinner('Loading Land Use...'):
@@ -337,19 +353,3 @@ st.dataframe(all_data, hide_index=True, width="stretch", height=(len(all_data.in
         "contractorname": st.column_config.TextColumn("Contractor Name"),
         "issueddate": st.column_config.DateColumn("Issued Date"),
     })
-
-st.sidebar.markdown("""
-----
-Collating a bunch of data one place to make things easier. Data is cached for 24 hours.  
-Land use changes do *not* appear in the table.
-
-All data is from [data.calgary.ca](https://data.calgary.ca):
-
-- [Community Boundaries](https://data.calgary.ca/Base-Maps/Community-District-Boundaries/surr-xmvs)
-- [Land Use](https://data.calgary.ca/dataset/Land-Use-Redesignation-Applications/33vi-ew4s)
-- [Development Permits](https://data.calgary.ca/dataset/Development-Permits/6933-unw5)
-- [Building Permits](https://data.calgary.ca/Business-and-Economic-Activity/Building-Permits/c2es-76ed)
-- [Tenancy Changes](https://data.calgary.ca/dataset/Tenancy-Change-Applications/wrtt-2nqs)
-
-[Forks and PRs greatly appreciated at GitHub](https://github.com/chealion/yycdevmap)
-""")

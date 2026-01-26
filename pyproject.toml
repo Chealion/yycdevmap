@@ -3,11 +3,11 @@ name = "yycdevmap"
 version = "0.3.0"
 requires-python = ">=3.11"
 dependencies = [
-    "geopandas==1.1.1",
-    "numpy==2.3.3",
+    "geopandas==1.1.2",
+    "numpy==2.4.1",
     "pandas==2.3.2",
-    "plotly==6.3.0",
+    "plotly==6.5.2",
     "sodapy==2.2.0",
-    "streamlit==1.49.1",
+    "streamlit==1.53.1",
     "watchdog==6.0.0",
 ]

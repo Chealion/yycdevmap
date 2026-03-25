@@ -4,10 +4,9 @@ import numpy as np
 import plotly.graph_objects as pgo
 import geopandas
 from geopandas.tools import sjoin
-import html
 import json
 from datetime import datetime, timedelta
-from urllib.parse import quote_plus
+from urllib.parse import urlparse, quote, unquote
 from sodapy import Socrata
 from shapely import Point
 from shapely.geometry import shape
@@ -68,15 +67,15 @@ community_data = load_community_data(COMMUNITY_NAMES_ID)
 
 st.sidebar.title("Community")
 
-# If ?community_name is set, grab it
-params = st.query_params.to_dict()
+# If /COMMUNITYNAME path is set, use it
+parsed_url = urlparse(st.context.url)
+base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+path_community = unquote(parsed_url.path.strip('/')).upper()
 # init value just in case
 index=0
 
-if 'community_name' in params:
-    #Turn to uppercase and remove HTML encoding just in case.
-    community_name=html.unescape(params['community_name'].upper())
-
+if path_community:
+    community_name = path_community
     try:
         newIndex = community_data.loc[community_data['name'] == community_name].index[0]
         index = int(newIndex)
@@ -98,7 +97,7 @@ selected_community_gdf = geopandas.GeoDataFrame(selected_community, geometry=sel
 st.sidebar.markdown(f"""
 Note: typing the name is easier.
 
-[Permalink]({st.context.url}?community_name={quote_plus(community_name)})
+[Permalink]({base_url}/{quote(community_name)})
 
 ----
 Collating a bunch of data one place to make things easier. Data is cached for 24 hours.

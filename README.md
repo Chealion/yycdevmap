@@ -21,6 +21,10 @@ Development: https://data.calgary.ca/dataset/Development-Permits/6933-unw5
 Building Permits: https://data.calgary.ca/Business-and-Economic-Activity/Building-Permits/c2es-76ed  
 Tenancy Change: https://data.calgary.ca/dataset/Tenancy-Change-Applications/wrtt-2nqs
 
+## Linking to a Community
+
+Append the community name to the URL to link directly to a specific community (e.g. `https://yycdevmap.streamlit.app/SUNALTA`). A permalink for the current community is also available in the sidebar.
+
 ## Development
 
 ### Optionally create venv

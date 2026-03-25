@@ -74,7 +74,7 @@ index=0
 
 if 'community_name' in params:
     #Turn to uppercase and remove HTML encoding just in case.
-    community_name=html.unescape(params['community_name'][0].upper())
+    community_name=html.unescape(params['community_name'].upper())
 
     try:
         newIndex = community_data.loc[community_data['name'] == community_name].index[0]

@@ -7,6 +7,7 @@ from geopandas.tools import sjoin
 import html
 import json
 from datetime import datetime, timedelta
+from urllib.parse import quote_plus
 from sodapy import Socrata
 from shapely import Point
 from shapely.geometry import shape
@@ -94,8 +95,10 @@ selected_community = community_data.loc[community_data['name'] == community_name
 selected_community_geometry = selected_community['multipolygon'].apply(lambda x: shape(x))
 selected_community_gdf = geopandas.GeoDataFrame(selected_community, geometry=selected_community_geometry)
 
-st.sidebar.markdown("""
+st.sidebar.markdown(f"""
 Note: typing the name is easier.
+
+[Permalink]({st.context.url}?community_name={quote_plus(community_name)})
 
 ----
 Collating a bunch of data one place to make things easier. Data is cached for 24 hours.

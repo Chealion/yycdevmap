@@ -68,7 +68,7 @@ community_data = load_community_data(COMMUNITY_NAMES_ID)
 st.sidebar.title("Community")
 
 # If /COMMUNITYNAME path is set, use it
-parsed_url = urlparse(str(st.context.url))
+parsed_url = urlparse(st.context.url or '')
 base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
 path_community = unquote(parsed_url.path.strip('/')).upper()
 # init value just in case
